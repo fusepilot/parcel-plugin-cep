@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "peerDependencies": {
-    "parcel-bundler": "^1.1.0"
+    "parcel-bundler": "^1.5.1"
   },
   "license": "MIT",
   "dependencies": {
