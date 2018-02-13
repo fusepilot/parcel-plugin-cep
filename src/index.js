@@ -29,7 +29,7 @@ module.exports = async bundler => {
 
     enablePlayerDebugMode()
 
-    const hosts = parseHosts('AEFT')
+    const hosts = parseHosts('AEFT, PHXS')
 
     await copyDependencies({
       env,
