@@ -8,6 +8,8 @@ const {
   symlinkExtension,
 } = require('./utils')
 
+const { createManifest } = require('./manifest')
+
 const bundleName = 'My Extension'
 const bundleId = 'my.extension'
 const bundleVersion = '1.0.0'
@@ -19,6 +21,8 @@ module.exports = async bundler => {
   // bundler.addPackager('foo', require.resolve('./MyPackager'));
 
   bundler.on('bundled', async bundle => {
+    await createManifest({ bundle, logger })
+
     if (bundle.entryAsset.type != 'html') return
 
     const env = process.env.NODE_ENV
