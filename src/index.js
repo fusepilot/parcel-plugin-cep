@@ -19,6 +19,8 @@ module.exports = async bundler => {
   // bundler.addPackager('foo', require.resolve('./MyPackager'));
 
   bundler.on('bundled', async bundle => {
+    if (bundle.entryAsset.type != 'html') return
+
     const env = process.env.NODE_ENV
 
     const out = path.dirname(bundle.name)
