@@ -20,7 +20,11 @@ async function readManifestJson({ manifestPath, logger }) {
 }
 
 async function feedManifestValue({ bundle, manifestValue, publicURL, logger }) {
-  let output = path.join(publicURL, path.basename(bundle.name))
+  let output = path.relative(
+    publicURL,
+    path.join(publicURL, path.basename(bundle.name))
+  )
+
   let input = bundle.entryAsset
     ? bundle.entryAsset.basename
     : bundle.assets.values().next().value.basename
