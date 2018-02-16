@@ -23,38 +23,42 @@ module.exports = async bundler => {
   bundler.on('bundled', async bundle => {
     await createManifest({ bundle, logger })
 
-    if (bundle.entryAsset.type != 'html') return
+    if (bundle.entryAsset.type == 'html') {
+      const env = process.env.NODE_ENV
 
-    const env = process.env.NODE_ENV
+      const out = path.dirname(bundle.name)
+      const htmlFilename = path.basename(bundle.entryAsset.parentBundle.name)
+      const root = path.dirname(bundle.entryAsset.package.pkgfile)
 
-    const out = path.dirname(bundle.name)
-    const root = path.dirname(bundle.entryAsset.package.pkgfile)
+      logger.status('📦', 'PackageManifestPlugin')
+      logger.status('📁', `     out : ${out}`)
 
-    logger.status('📦', 'PackageManifestPlugin')
-    logger.status('📁', `     out : ${out}`)
+      enablePlayerDebugMode()
 
-    enablePlayerDebugMode()
+      const hosts = parseHosts('AEFT, PHXS')
 
-    const hosts = parseHosts('AEFT, PHXS')
+      await copyDependencies({
+        env,
+        out,
+        root,
+        package: bundle.entryAsset.package,
+      })
 
-    await copyDependencies({
-      env,
-      out,
-      root,
-      package: bundle.entryAsset.package,
-    })
+      await writeExtensionTemplates({
+        env,
+        hosts,
+        port: 1234,
+        htmlFilename,
+        bundleName,
+        bundleId,
+        bundleVersion,
+        out,
+      })
 
-    await writeExtensionTemplates({
-      env: 'dev',
-      hosts,
-      port: 1234,
-      bundleName,
-      bundleId,
-      bundleVersion,
-      out,
-    })
+      await symlinkExtension({ bundleId, out })
 
-    await symlinkExtension({ bundleId, out })
+      // console.log('bundle port', bundler.server.address().port)
+    }
   })
 }
 

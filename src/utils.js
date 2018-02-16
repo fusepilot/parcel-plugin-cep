@@ -51,6 +51,7 @@ async function writeExtensionTemplates({
   port,
   hosts,
   out,
+  htmlFilename,
   bundleName,
   bundleId,
   bundleVersion,
@@ -69,9 +70,10 @@ async function writeExtensionTemplates({
   const debugContents = debugTemplate(bundleId, hosts)
   await fs.writeFile(path.join(out, '.debug'), debugContents)
 
+  const href = env == 'production' ? htmlFilename : `http://localhost:${port}`
   const panelContents = panelTemplate({
     title: bundleName,
-    port: 1234,
+    href,
   })
   fs.writeFileSync(path.join(out, 'panel.html'), panelContents)
 }
