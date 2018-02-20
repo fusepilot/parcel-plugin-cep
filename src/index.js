@@ -15,13 +15,11 @@ const bundleId = 'my.extension'
 const bundleVersion = '1.0.0'
 
 module.exports = async bundler => {
-  const logger = bundler.logger
-  // logger.status('🖊', 'update manifest file')
   // bundler.addAssetType('.js', require.resolve('./assets'))
   // bundler.addPackager('foo', require.resolve('./MyPackager'));
 
   bundler.on('bundled', async bundle => {
-    await createManifest({ bundle, logger })
+    await createManifest({ bundle })
 
     if (bundle.entryAsset.type == 'html') {
       const env = process.env.NODE_ENV
@@ -29,9 +27,6 @@ module.exports = async bundler => {
       const out = path.dirname(bundle.name)
       const htmlFilename = path.basename(bundle.entryAsset.parentBundle.name)
       const root = path.dirname(bundle.entryAsset.package.pkgfile)
-
-      logger.status('📦', 'PackageManifestPlugin')
-      logger.status('📁', `     out : ${out}`)
 
       enablePlayerDebugMode()
 
