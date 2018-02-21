@@ -70,7 +70,7 @@ module.exports = async bundler => {
         out,
       })
 
-      await symlinkExtension({ bundleId, out })
+      await symlinkExtension({ bundleId: config.bundleId, out })
 
       // console.log('bundle port', bundler.server.address().port)
     }
