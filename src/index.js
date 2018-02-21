@@ -1,5 +1,6 @@
 const path = require('path')
 const fs = require('fs-extra')
+const { defaultsDeep } = require('lodash')
 
 const {
   parseHosts,
@@ -10,14 +11,7 @@ const {
 
 const { createManifest } = require('./manifest')
 
-const bundleName = 'My Extension'
-const bundleId = 'my.extension'
-const bundleVersion = '1.0.0'
-
 module.exports = async bundler => {
-  // bundler.addAssetType('.js', require.resolve('./assets'))
-  // bundler.addPackager('foo', require.resolve('./MyPackager'));
-
   bundler.on('bundled', async bundle => {
     await createManifest({ bundle })
 
@@ -28,9 +22,35 @@ module.exports = async bundler => {
       const htmlFilename = path.basename(bundle.entryAsset.parentBundle.name)
       const root = path.dirname(bundle.entryAsset.package.pkgfile)
 
+      const package = require(bundle.entryAsset.package.pkgfile)
+
+      const config = defaultsDeep(
+        {
+          bundleName: process.env.CEP_NAME,
+          bundleId: process.env.CEP_ID,
+          bundleVersion: process.env.CEP_VERSION,
+          hosts: process.env.CEP_HOSTS,
+        },
+        {
+          bundleName: package.cep && package.cep.name,
+          bundleId: package.cep && package.cep.id,
+          bundleVersion: package.cep && package.cep.version,
+          hosts: package.cep && package.cep.hosts,
+        },
+        {
+          bundleVersion: package.version,
+        },
+        {
+          bundleName: 'My Extension',
+          bundleId: 'com.mycompany.myextension',
+          bundleVersion: '0.0.1',
+          hosts: '*',
+        }
+      )
+
       enablePlayerDebugMode()
 
-      const hosts = parseHosts('AEFT, PHXS')
+      const hosts = parseHosts(config.hosts)
 
       await copyDependencies({
         env,
@@ -44,9 +64,9 @@ module.exports = async bundler => {
         hosts,
         port: 1234,
         htmlFilename,
-        bundleName,
-        bundleId,
-        bundleVersion,
+        bundleName: config.bundleName,
+        bundleId: config.bundleId,
+        bundleVersion: config.bundleVersion,
         out,
       })
 
