@@ -79,6 +79,8 @@ async function writeExtensionTemplates({
 }
 
 function parseHosts(hostsString) {
+  if (hostsString == '*')
+    hostsString = `PHXS, IDSN, AICY, ILST, PPRO, PRLD, AEFT, FLPR, AUDT, DRWV, MUST, KBRG`
   const hosts = hostsString
     .split(/(?![^)(]*\([^)(]*?\)\)),(?![^\[]*\])/)
     .map(host => host.trim())
