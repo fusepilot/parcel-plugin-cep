@@ -59,6 +59,8 @@ module.exports = async bundler => {
         package: bundle.entryAsset.package,
       })
 
+      // TODO get bundler port number automatically once https://github.com/parcel-bundler/parcel/pull/822 is pubished
+
       await writeExtensionTemplates({
         env,
         hosts,
@@ -71,8 +73,6 @@ module.exports = async bundler => {
       })
 
       await symlinkExtension({ bundleId: config.bundleId, out })
-
-      // console.log('bundle port', bundler.server.address().port)
     }
   })
 }
