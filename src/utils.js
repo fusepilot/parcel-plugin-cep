@@ -1,6 +1,7 @@
 const { execSync, spawn } = require('child_process')
 const path = require('path')
 const fs = require('fs-extra')
+const os = require('os')
 
 function enablePlayerDebugMode() {
   // enable unsigned extensions for the foreseable future
@@ -103,12 +104,21 @@ function parseHosts(hostsString) {
 }
 
 function getExtenstionPath() {
-  return '/Library/Application Support/Adobe/CEP/extensions'
+  if (process.platform == 'darwin') {
+    return path.join(
+      os.homedir(),
+      '/Library/Application Support/Adobe/CEP/extensions'
+    )
+  } else if (process.platform == 'win32') {
+    return path.join(process.env.APPDATA, 'Adobe/CEP/extensions')
+  } else {
+    throw Error(`Unsupported CEP platorm "${process.platform}"`)
+  }
 }
 
 function getSymlinkExtensionPath({ bundleId }) {
   const extensionPath = getExtenstionPath()
-  return path.join(process.env.HOME, extensionPath, bundleId)
+  return path.join(extensionPath, bundleId)
 }
 
 async function symlinkExtension({ bundleId, out }) {
