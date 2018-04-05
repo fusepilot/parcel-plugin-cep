@@ -125,7 +125,11 @@ async function symlinkExtension({ bundleId, out }) {
   await fs.ensureDir(getExtenstionPath())
   let target = getSymlinkExtensionPath({ bundleId })
   await fs.remove(target)
-  await fs.symlink(path.join(out, '/'), target)
+  if (process.platform === 'win32') {
+    await fs.symlink(path.join(out, '/'), target, 'junction')
+  } else {
+    await fs.symlink(path.join(out, '/'), target)
+  }
 }
 
 module.exports = {
