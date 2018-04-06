@@ -66,8 +66,10 @@ async function writeExtensionTemplates({
   await fs.ensureDir(path.join(out, 'CSXS'))
   await fs.writeFile(path.join(out, 'CSXS/manifest.xml'), manifestContents)
 
-  const debugContents = debugTemplate(bundleId, hosts)
-  await fs.writeFile(path.join(out, '.debug'), debugContents)
+  if (env != 'production') {
+    const debugContents = debugTemplate(bundleId, hosts)
+    await fs.writeFile(path.join(out, '.debug'), debugContents)
+  }
 
   const href = env == 'production' ? htmlFilename : `http://localhost:${port}`
   const panelContents = panelTemplate({
