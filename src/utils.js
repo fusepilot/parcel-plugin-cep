@@ -2,45 +2,28 @@ const { execSync, spawn } = require('child_process')
 const path = require('path')
 const fs = require('fs-extra')
 const os = require('os')
+const { range } = require('lodash')
+
+function templateDebug(formatter) {
+  return range(4, 16).map(formatter).join(os.EOL)
+}
 
 function enablePlayerDebugMode() {
   // enable unsigned extensions for the foreseable future
-  execSync(
-    `
-    defaults write com.adobe.CSXS.15 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.14 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.13 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.12 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.11 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.10 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.9 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.8 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.7 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.6 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.5 PlayerDebugMode 1;
-    defaults write com.adobe.CSXS.4 PlayerDebugMode 1;
-  `
-  )
+  if (process.platform === 'darwin') {
+    execSync(templateDebug(i => `defaults write com.adobe.CSXS.${i} PlayerDebugMode 1`))
+  } else if (process.platform === 'win32') {
+    execSync(templateDebug(i => `REG ADD HKCU\\Software\\Adobe\\CSXS.${i} /f /v PlayerDebugMode /t REG_SZ /d 1`))
+  }
 }
 
 function disablePlayerDebugMode() {
   // disable unsigned extensions for the foreseable future
-  execSync(
-    `
-    defaults write com.adobe.CSXS.15 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.14 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.13 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.12 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.11 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.10 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.9 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.8 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.7 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.6 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.5 PlayerDebugMode 0;
-    defaults write com.adobe.CSXS.4 PlayerDebugMode 0;
-  `
-  )
+  if (process.platform === 'darwin') {
+    execSync(templateDebug(i => `defaults write com.adobe.CSXS.${i} PlayerDebugMode 0`))
+  } else if (process.platform === 'win32') {
+    execSync(templateDebug(i => `REG DELETE HKCU\\Software\\Adobe\\CSXS.${i} /f /v PlayerDebugMode`))
+  }
 }
 
 const manifestTemplate = require('./templates/manifest')
