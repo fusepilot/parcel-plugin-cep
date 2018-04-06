@@ -13,12 +13,14 @@ const { createManifest } = require('./manifest')
 
 module.exports = async bundler => {
   bundler.on('bundled', async bundle => {
-    const port = bundler.server.address().port
-
     await createManifest({ bundle })
 
     if (bundle.entryAsset.type == 'html') {
       const env = process.env.NODE_ENV
+      const port =
+        env != 'production' && bundler.server
+          ? bundler.server.address().port
+          : 1234
 
       const out = path.dirname(bundle.name)
       const htmlFilename = path.basename(bundle.entryAsset.parentBundle.name)
