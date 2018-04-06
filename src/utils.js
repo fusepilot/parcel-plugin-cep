@@ -5,24 +5,39 @@ const os = require('os')
 const { range } = require('lodash')
 
 function templateDebug(formatter) {
-  return range(4, 16).map(formatter).join(os.EOL)
+  return range(4, 16)
+    .map(formatter)
+    .join(os.EOL)
 }
 
 function enablePlayerDebugMode() {
   // enable unsigned extensions for the foreseable future
   if (process.platform === 'darwin') {
-    execSync(templateDebug(i => `defaults write com.adobe.CSXS.${i} PlayerDebugMode 1`))
+    execSync(
+      templateDebug(i => `defaults write com.adobe.CSXS.${i} PlayerDebugMode 1`)
+    )
   } else if (process.platform === 'win32') {
-    execSync(templateDebug(i => `REG ADD HKCU\\Software\\Adobe\\CSXS.${i} /f /v PlayerDebugMode /t REG_SZ /d 1`))
+    execSync(
+      templateDebug(
+        i =>
+          `REG ADD HKCU\\Software\\Adobe\\CSXS.${i} /f /v PlayerDebugMode /t REG_SZ /d 1`
+      )
+    )
   }
 }
 
 function disablePlayerDebugMode() {
   // disable unsigned extensions for the foreseable future
   if (process.platform === 'darwin') {
-    execSync(templateDebug(i => `defaults write com.adobe.CSXS.${i} PlayerDebugMode 0`))
+    execSync(
+      templateDebug(i => `defaults write com.adobe.CSXS.${i} PlayerDebugMode 0`)
+    )
   } else if (process.platform === 'win32') {
-    execSync(templateDebug(i => `REG DELETE HKCU\\Software\\Adobe\\CSXS.${i} /f /v PlayerDebugMode`))
+    execSync(
+      templateDebug(
+        i => `REG DELETE HKCU\\Software\\Adobe\\CSXS.${i} /f /v PlayerDebugMode`
+      )
+    )
   }
 }
 
