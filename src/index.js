@@ -13,6 +13,8 @@ const { createManifest } = require('./manifest')
 
 module.exports = async bundler => {
   bundler.on('bundled', async bundle => {
+    const port = bundler.server.address().port
+
     await createManifest({ bundle })
 
     if (bundle.entryAsset.type == 'html') {
@@ -59,12 +61,10 @@ module.exports = async bundler => {
         package: bundle.entryAsset.package,
       })
 
-      // TODO get bundler port number automatically once https://github.com/parcel-bundler/parcel/pull/822 is pubished
-
       await writeExtensionTemplates({
         env,
         hosts,
-        port: 1234,
+        port,
         htmlFilename,
         bundleName: config.bundleName,
         bundleId: config.bundleId,
