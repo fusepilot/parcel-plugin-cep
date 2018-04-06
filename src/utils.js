@@ -111,8 +111,6 @@ function getExtenstionPath() {
     )
   } else if (process.platform == 'win32') {
     return path.join(process.env.APPDATA, 'Adobe/CEP/extensions')
-  } else {
-    throw Error(`Unsupported CEP platorm "${process.platform}"`)
   }
 }
 
