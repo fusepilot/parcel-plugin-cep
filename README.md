@@ -138,7 +138,7 @@ Evaluates the specified code. Returns a Promise.
 ```javascript
 import { evalExtendscript } from 'cep-interface'
 
-evalExtendscript('$.writeln("Hello Foo");') // writes "Hello Foo" to the info panel
+evalExtendscript('alert("Hello!");') // alerts "Hello!" inside the app
 ```
 
 If you return a JSON string using [json2](https://github.com/douglascrockford/JSON-js) or similar from Extendscript, you can get the parsed result.
