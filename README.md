@@ -121,7 +121,7 @@ PANEL_HEIGHT=500
 
 There are few functions that you can import from the `cep-interface` package to ease Extendscript communication from CEP.
 
-### `loadExtendscript(extendScriptFileName: string): Promise`
+#### `loadExtendscript(extendScriptFileName: string): Promise`
 
 Loads and evaluates the specified file in the src/extendscript directory. Returns a promise with the result.
 
@@ -131,7 +131,7 @@ import { loadExtendscript } from 'cep-interface'
 loadExtendscript('index.jsx')
 ```
 
-### `evalExtendscript(code: string): Promise`
+#### `evalExtendscript(code: string): Promise`
 
 Evaluates the specified code. Returns a Promise.
 
@@ -155,7 +155,7 @@ evalExtendscript('JSON.stringifiy({foo: "bar"});')
 
 There are a few other functions available in addition.
 
-### `openURLInDefaultBrowser(url: string)`
+#### `openURLInDefaultBrowser(url: string)`
 
 ```javascript
 import { openURLInDefaultBrowser } from 'cep-interface'
