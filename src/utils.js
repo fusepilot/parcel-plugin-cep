@@ -54,6 +54,10 @@ async function writeExtensionTemplates({
   bundleName,
   bundleId,
   bundleVersion,
+  iconNormal,
+  iconRollover,
+  iconDarkNormal,
+  iconDarkRollover,
 }) {
   const manifestContents = manifestTemplate({
     bundleName,
@@ -61,6 +65,10 @@ async function writeExtensionTemplates({
     version: bundleVersion,
     hosts,
     bundleVersion,
+    iconNormal,
+    iconRollover,
+    iconDarkNormal,
+    iconDarkRollover,
   })
 
   await fs.ensureDir(path.join(out, 'CSXS'))

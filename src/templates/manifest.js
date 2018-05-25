@@ -12,6 +12,10 @@ module.exports = function({
     '--allow-file-access',
     '--enable-nodejs',
   ],
+  iconNormal,
+  iconRollover,
+  iconDarkNormal,
+  iconDarkRollover,
 }) {
   var commandLineParams = cefParams.map(
     cefParam => `<Parameter>${cefParam}</Parameter>`
@@ -56,6 +60,12 @@ module.exports = function({
               <Width>${height}</Width>
             </Size>
           </Geometry>
+          <Icons>
+            <Icon Type="Normal">${iconNormal}</Icon>
+            <Icon Type="RollOver">${iconRollover}</Icon>
+            <Icon Type="DarkNormal">${iconDarkNormal}</Icon>
+            <Icon Type="DarkRollOver">${iconDarkRollover}</Icon>
+          </Icons>
         </UI>
       </DispatchInfo>
     </Extension>

@@ -34,12 +34,20 @@ module.exports = async bundler => {
           bundleId: process.env.CEP_ID,
           bundleVersion: process.env.CEP_VERSION,
           hosts: process.env.CEP_HOSTS,
+          iconNormal: process.env.ICON_NORMAL,
+          iconRollover: process.env.ICON_ROLLOVER,
+          iconDarkNormal: process.env.ICON_DARK_NORMAL,
+          iconDarkRollover: process.env.ICON_DARK_ROLLOVER,
         },
         {
           bundleName: package.cep && package.cep.name,
           bundleId: package.cep && package.cep.id,
           bundleVersion: package.cep && package.cep.version,
           hosts: package.cep && package.cep.hosts,
+          iconNormal: package.cep.iconNormal,
+          iconRollover: package.cep.iconRollover,
+          iconDarkNormal: package.cep.iconDarkNormal,
+          iconDarkRollover: package.cep.iconDarkRollover,
         },
         {
           bundleVersion: package.version,
@@ -71,6 +79,10 @@ module.exports = async bundler => {
         bundleName: config.bundleName,
         bundleId: config.bundleId,
         bundleVersion: config.bundleVersion,
+        iconNormal: config.iconNormal,
+        iconRollover: config.iconRollover,
+        iconDarkNormal: config.iconDarkNormal,
+        iconDarkRollover: config.iconDarkRollover,
         out,
       })
 
