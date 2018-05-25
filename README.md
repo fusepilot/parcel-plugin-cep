@@ -110,6 +110,13 @@ CERTIFICATE_NAME="com.mycompany"
 CERTIFICATE_PASSWORD="mypassword"
 ```
 
+#### Panel Size
+
+```bash
+PANEL_WIDTH=500
+PANEL_HEIGHT=500
+```
+
 ## Communicating with Extendscript
 
 There are few functions that you can import from the `cep-interface` package to ease Extendscript communication from CEP.

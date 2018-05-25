@@ -5,8 +5,8 @@ module.exports = function({
   hosts,
   bundleVersion = '1.0.0',
   cepVersion = '6.0',
-  width = '500',
-  height = '500',
+  panelWidth = '500',
+  panelHeight = '500',
   cefParams = [
     '--allow-file-access-from-files',
     '--allow-file-access',
@@ -56,8 +56,8 @@ module.exports = function({
           <Menu>${bundleName}</Menu>
           <Geometry>
             <Size>
-              <Height>${width}</Height>
-              <Width>${height}</Width>
+              <Width>${panelWidth}</Width>
+              <Height>${panelHeight}</Height>
             </Size>
           </Geometry>
           <Icons>

@@ -38,6 +38,8 @@ module.exports = async bundler => {
           iconRollover: process.env.ICON_ROLLOVER,
           iconDarkNormal: process.env.ICON_DARK_NORMAL,
           iconDarkRollover: process.env.ICON_DARK_ROLLOVER,
+          panelWidth: process.env.PANEL_WIDTH,
+          panelHeight: process.env.PANEL_HEIGHT,
         },
         {
           bundleName: package.cep && package.cep.name,
@@ -48,6 +50,8 @@ module.exports = async bundler => {
           iconRollover: package.cep.iconRollover,
           iconDarkNormal: package.cep.iconDarkNormal,
           iconDarkRollover: package.cep.iconDarkRollover,
+          panelWidth: package.cep.panelWidth,
+          panelHeight: package.cep.panelHeight,
         },
         {
           bundleVersion: package.version,
@@ -57,6 +61,8 @@ module.exports = async bundler => {
           bundleId: 'com.mycompany.myextension',
           bundleVersion: '0.0.1',
           hosts: '*',
+          panelWidth: 500,
+          panelHeight: 500,
         }
       )
 
@@ -83,6 +89,8 @@ module.exports = async bundler => {
         iconRollover: config.iconRollover,
         iconDarkNormal: config.iconDarkNormal,
         iconDarkRollover: config.iconDarkRollover,
+        panelWidth: config.panelWidth,
+        panelHeight: config.panelHeight,
         out,
       })
 
