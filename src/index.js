@@ -30,10 +30,10 @@ module.exports = async bundler => {
 
       const config = defaultsDeep(
         {
-          bundleName: process.env.CEP_NAME,
-          bundleId: process.env.CEP_ID,
-          bundleVersion: process.env.CEP_VERSION,
-          hosts: process.env.CEP_HOSTS,
+          bundleName: process.env.NAME,
+          bundleId: process.env.ID,
+          bundleVersion: process.env.VERSION,
+          hosts: process.env.HOSTS,
           iconNormal: process.env.ICON_NORMAL,
           iconRollover: process.env.ICON_ROLLOVER,
           iconDarkNormal: process.env.ICON_DARK_NORMAL,
