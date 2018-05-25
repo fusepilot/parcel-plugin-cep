@@ -21,6 +21,16 @@ module.exports = function({
     cefParam => `<Parameter>${cefParam}</Parameter>`
   )
 
+  var icons = [
+    { icon: iconNormal, type: 'Normal' },
+    { icon: iconRollover, type: 'RollOver' },
+    { icon: iconDarkNormal, type: 'DarkNormal' },
+    { icon: iconDarkRollover, type: 'DarkRollOver' },
+  ]
+    .filter(({ icon }) => !!icon)
+    .map(({ icon, type }) => `<Icon Type="${type}">${icon}</Icon>`)
+    .join('\n            ')
+
   return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ExtensionBundleId="${bundleId}" ExtensionBundleName="${bundleName}" ExtensionBundleVersion="${bundleVersion}" Version="${cepVersion}">
   <ExtensionList>
@@ -61,10 +71,7 @@ module.exports = function({
             </Size>
           </Geometry>
           <Icons>
-            <Icon Type="Normal">${iconNormal}</Icon>
-            <Icon Type="RollOver">${iconRollover}</Icon>
-            <Icon Type="DarkNormal">${iconDarkNormal}</Icon>
-            <Icon Type="DarkRollOver">${iconDarkRollover}</Icon>
+            ${icons}
           </Icons>
         </UI>
       </DispatchInfo>
