@@ -95,6 +95,7 @@ module.exports = async bundler => {
       })
 
       await symlinkExtension({ bundleId: config.bundleId, out })
+      await copyIcons({ bundle, config })
     }
   })
 }
@@ -113,4 +114,31 @@ async function copyDependencies({ env, out, root, package }) {
       `${out}/node_modules/${dep}`
     )
   }
+}
+
+async function copyIcons({ bundle, config }) {
+  const outDir = bundle.entryAsset.options.outDir
+  const iconPaths = [
+    config.iconNormal,
+    config.iconRollover,
+    config.iconDarkNormal,
+    config.iconDarkRollover,
+  ]
+    .filter(icon => !!icon)
+    .map(icon => ({
+      source: path.resolve(process.cwd(), icon),
+      output: path.join(outDir, path.relative(process.cwd(), icon)),
+    }))
+
+  await Promise.all(
+    iconPaths.map(async icon => {
+      try {
+        await fs.copy(icon.source, icon.output)
+      } catch (e) {
+        console.error(
+          `Could not copy ${icon.source}. Ensure the path is correct.`
+        )
+      }
+    })
+  )
 }
