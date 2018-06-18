@@ -24,9 +24,9 @@ module.exports = async bundler => {
 
       const out = path.dirname(bundle.name)
       const htmlFilename = path.basename(bundle.entryAsset.parentBundle.name)
-      const root = path.dirname(bundle.entryAsset.package.pkgfile)
 
-      const package = require(bundle.entryAsset.package.pkgfile)
+      const root = process.cwd()
+      const package = await bundle.entryAsset.getPackage()
 
       const config = defaultsDeep(
         {
@@ -74,7 +74,7 @@ module.exports = async bundler => {
         env,
         out,
         root,
-        package: bundle.entryAsset.package,
+        package,
       })
 
       await writeExtensionTemplates({
