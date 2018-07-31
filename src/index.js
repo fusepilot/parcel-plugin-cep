@@ -101,8 +101,11 @@ module.exports = async bundler => {
 }
 
 async function copyDependencies({ env, out, root, package }) {
-  await fs.remove(`${out}/node_modules`)
-  await fs.mkdirp(`${out}/node_modules`)
+  const distNodeModulesPath = path.join(out, 'node_modules')
+  if (await fs.pathExists(distNodeModulesPath)) {
+    await fs.remove(distNodeModulesPath)
+    await fs.mkdirp(distNodeModulesPath)
+  }
 
   let copyFunction = fs.ensureSymlink
   if (env == 'production') copyFunction = fs.copy
