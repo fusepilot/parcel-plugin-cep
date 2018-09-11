@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs-extra')
 const { defaultsDeep } = require('lodash')
+const { execSync } = require('child_process')
 
 const {
   parseHosts,
@@ -101,19 +102,31 @@ module.exports = async bundler => {
 }
 
 async function copyDependencies({ env, out, root, package }) {
-  await fs.remove(`${out}/node_modules`)
-  await fs.mkdirp(`${out}/node_modules`)
+  const nodeModulesName = 'node_modules'
+  const nodeModulesTempName = `${nodeModulesName}_temp`
 
-  let copyFunction = fs.ensureSymlink
-  if (env == 'production') copyFunction = fs.copy
+  // rename root node_modules so yarn install --production doesnt corrupt it
+  await fs.rename(
+    path.join(root, nodeModulesName),
+    path.join(root, nodeModulesTempName)
+  )
 
-  const deps = package.dependencies || {}
-  for (const dep of Object.keys(deps)) {
-    await copyFunction(
-      `${root}/node_modules/${dep}`,
-      `${out}/node_modules/${dep}`
-    )
-  }
+  // install production dependences to out node_modules
+  execSync(
+    `yarn install --production --modules-folder ${path.join(
+      out,
+      nodeModulesName
+    )}`
+  )
+
+  // clean up after yarn
+  await fs.remove(path.join(root, nodeModulesName))
+
+  // restore root node_modules
+  await fs.rename(
+    path.join(root, nodeModulesTempName),
+    path.join(root, nodeModulesName)
+  )
 }
 
 async function copyIcons({ bundle, config }) {
