@@ -7,8 +7,8 @@ Zero configuration CEP extension builder for [Parcel](https://github.com/parcel-
 ```sh
 git clone https://github.com/fusepilot/parcel-plugin-cep-starter.git
 cd parcel-plugin-cep-starter
-yarn
-yarn run start
+npm
+npm run start
 ```
 
 Open your CC app of choice, find your extension under `Window` > `Extensions`, and start developing.
@@ -18,7 +18,7 @@ Open your CC app of choice, find your extension under `Window` > `Extensions`, a
 To create a production build:
 
 ```sh
-yarn run build
+npm run build
 ```
 
 ### Packaging
@@ -26,7 +26,7 @@ yarn run build
 To create a .zxp for deployment:
 
 ```sh
-yarn run zxp
+npm run zxp
 ```
 
 A versioned .zxp file will be placed inside `archive`.
