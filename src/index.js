@@ -1,34 +1,37 @@
 const path = require('path')
 const fs = require('fs-extra')
 const { defaultsDeep } = require('lodash')
-const { execSync } = require('child_process')
+const chokidar = require('chokidar');
 
 const {
   parseHosts,
   writeExtensionTemplates,
   enablePlayerDebugMode,
   symlinkExtension,
+  copyDependencies,
+  copyIcons,
 } = require('./utils')
 
-const { createManifest } = require('./manifest')
-
 module.exports = async bundler => {
-  bundler.on('bundled', async bundle => {
-    await createManifest({ bundle })
-
-    if (bundle.entryAsset.type == 'html') {
-      const env = process.env.NODE_ENV
-      const port =
-        env != 'production' && bundler.server
-          ? bundler.server.address().port
-          : 1234
-
-      const out = path.dirname(bundle.name)
-      const htmlFilename = path.basename(bundle.entryAsset.parentBundle.name)
-
-      const root = process.cwd()
-      const package = await bundle.entryAsset.getPackage()
-
+  if (bundler.entryFiles.length === 1 && path.extname(bundler.entryFiles[0]) === '.html') {
+    const htmlFilename = path.basename(bundler.entryFiles[0])
+    const env = process.env.NODE_ENV
+    const port =
+      env != 'production' && bundler.server
+        ? bundler.server.address().port
+        : 1234
+    const root = process.cwd()
+    const out = bundler.options.outDir
+    const package = fs.readJsonSync(path.join(root, 'package.json'))
+    const watch = chokidar.watch(path.join(root, 'package.json'), {
+      ignored: /(^|[\/\\])\../,
+      persistent: true
+    });
+    watch.on('change', (path) => {
+      bundle()
+    })
+    bundle()
+    async function bundle() {
       const config = defaultsDeep(
         {
           bundleName: process.env.NAME,
@@ -66,18 +69,9 @@ module.exports = async bundler => {
           panelHeight: 500,
         }
       )
-
       enablePlayerDebugMode()
-
       const hosts = parseHosts(config.hosts)
-
-      await copyDependencies({
-        env,
-        out,
-        root,
-        package,
-      })
-
+      await copyDependencies({ root, out, package })
       await writeExtensionTemplates({
         env,
         hosts,
@@ -94,64 +88,10 @@ module.exports = async bundler => {
         panelHeight: config.panelHeight,
         out,
       })
-
       await symlinkExtension({ bundleId: config.bundleId, out })
-      await copyIcons({ bundle, config })
+      await copyIcons({ bundler, config })
     }
-  })
-}
+  }
 
-async function copyDependencies({ env, out, root, package }) {
-  const nodeModulesName = 'node_modules'
-  const nodeModulesTempName = `${nodeModulesName}_temp`
-
-  // rename root node_modules so yarn install --production doesnt corrupt it
-  await fs.rename(
-    path.join(root, nodeModulesName),
-    path.join(root, nodeModulesTempName)
-  )
-
-  // install production dependences to out node_modules
-  execSync(
-    `yarn install --production --modules-folder ${path.join(
-      out,
-      nodeModulesName
-    )}`
-  )
-
-  // clean up after yarn
-  await fs.remove(path.join(root, nodeModulesName))
-
-  // restore root node_modules
-  await fs.rename(
-    path.join(root, nodeModulesTempName),
-    path.join(root, nodeModulesName)
-  )
-}
-
-async function copyIcons({ bundle, config }) {
-  const outDir = bundle.entryAsset.options.outDir
-  const iconPaths = [
-    config.iconNormal,
-    config.iconRollover,
-    config.iconDarkNormal,
-    config.iconDarkRollover,
-  ]
-    .filter(icon => !!icon)
-    .map(icon => ({
-      source: path.resolve(process.cwd(), icon),
-      output: path.join(outDir, path.relative(process.cwd(), icon)),
-    }))
-
-  await Promise.all(
-    iconPaths.map(async icon => {
-      try {
-        await fs.copy(icon.source, icon.output)
-      } catch (e) {
-        console.error(
-          `Could not copy ${icon.source}. Ensure the path is correct.`
-        )
-      }
-    })
-  )
+  // this.watchedDirectories = new Map();
 }

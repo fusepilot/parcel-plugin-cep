@@ -142,7 +142,54 @@ async function symlinkExtension({ bundleId, out }) {
   }
 }
 
+async function copyDependencies({ root, out, package }) {
+  const deps = package.dependencies || {}
+  for (const dep of Object.keys(deps)) {
+    try {
+      const src = path.join(root, 'node_modules', dep)
+      const dest = path.join(out, 'node_modules', dep)
+      await fs.copy(src, dest)
+    } catch (err) {
+      console.error('Error while copying', err)
+    }
+    await copyDependencies({
+      root,
+      out,
+      package: fs.readJsonSync(path.join(root, 'node_modules', dep, 'package.json'))
+    })
+  }
+}
+
+async function copyIcons({ bundler, config }) {
+  const outDir = bundler.options.outDir
+  const iconPaths = [
+    config.iconNormal,
+    config.iconRollover,
+    config.iconDarkNormal,
+    config.iconDarkRollover,
+  ]
+    .filter(icon => !!icon)
+    .map(icon => ({
+      source: path.resolve(process.cwd(), icon),
+      output: path.join(outDir, path.relative(process.cwd(), icon)),
+    }))
+
+  await Promise.all(
+    iconPaths.map(async icon => {
+      try {
+        await fs.copy(icon.source, icon.output)
+      } catch (e) {
+        console.error(
+          `Could not copy ${icon.source}. Ensure the path is correct.`
+        )
+      }
+    })
+  )
+}
+
 module.exports = {
+  copyDependencies,
+  copyIcons,
   enablePlayerDebugMode,
   disablePlayerDebugMode,
   writeExtensionTemplates,
