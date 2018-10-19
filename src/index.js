@@ -38,6 +38,9 @@ module.exports = async bundler => {
     watch.on('change', (path) => {
       bundle()
     })
+    bundler.on('buildEnd', () => {
+      watch.close()
+    })
     bundle()
     async function bundle() {
       enablePlayerDebugMode()
