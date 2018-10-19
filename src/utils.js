@@ -67,7 +67,7 @@ function getConfig(package) {
       panelHeight: process.env.PANEL_HEIGHT,
       debugPorts: debugPortEnvs.length > 0
         ? debugPortEnvs.reduce((obj, key) => {
-          obj[key] = process.env[key];
+          obj[key] = parseInt(process.env[key], 10)
           return obj
         }, {})
         : undefined
