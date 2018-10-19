@@ -93,5 +93,4 @@ module.exports = async bundler => {
     }
   }
 
-  // this.watchedDirectories = new Map();
 }
