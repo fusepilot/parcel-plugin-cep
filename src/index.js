@@ -60,6 +60,7 @@ module.exports = async bundler => {
         iconDarkRollover: config.iconDarkRollover,
         panelWidth: config.panelWidth,
         panelHeight: config.panelHeight,
+        debugInProduction: config.debugInProduction,
         out,
       })
       await symlinkExtension({ bundleId: config.bundleId, out })

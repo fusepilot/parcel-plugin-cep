@@ -50,6 +50,10 @@ function camelToSnake(str) {
   return str.replace(/([A-Z])/g, (part) => `_${part.toLowerCase()}`)
 }
 
+function isTruthy(str) {
+  return typeof str === 'string' && (str === '1' || str.toLowerCase() === 'true')
+}
+
 function getConfig(package) {
   const debugPortEnvs = Object.keys(process.env)
     .filter((key) => key.indexOf('DEBUG_PORT_') === 0)
@@ -70,7 +74,8 @@ function getConfig(package) {
           obj[key] = parseInt(process.env[key], 10)
           return obj
         }, {})
-        : undefined
+        : undefined,
+      debugInProduction: isTruthy(process.env.DEBUG_IN_PRODUCTION),
     },
     {
       bundleName: package.cep && package.cep.name,
@@ -84,6 +89,7 @@ function getConfig(package) {
       panelWidth: package.cep.panelWidth,
       panelHeight: package.cep.panelHeight,
       debugPorts: package.cep.debugPorts,
+      debugInProduction: package.cep.debugInProduction,
     },
     {
       bundleVersion: package.version,
@@ -95,6 +101,7 @@ function getConfig(package) {
       hosts: '*',
       panelWidth: 500,
       panelHeight: 500,
+      debugInProduction: false,
       debugPorts: {
         PHXS: 3001,
         IDSN: 3002,
@@ -140,6 +147,7 @@ async function writeExtensionTemplates({
   iconDarkRollover,
   panelWidth,
   panelHeight,
+  debugInProduction,
 }) {
   const manifestContents = manifestTemplate({
     bundleName,
@@ -158,7 +166,7 @@ async function writeExtensionTemplates({
   await fs.ensureDir(path.join(out, 'CSXS'))
   await fs.writeFile(path.join(out, 'CSXS/manifest.xml'), manifestContents)
 
-  if (env != 'production') {
+  if (debugInProduction || process.env.NODE_ENV !== 'production') {
     const debugContents = debugTemplate(bundleId, hosts)
     await fs.writeFile(path.join(out, '.debug'), debugContents)
   }
