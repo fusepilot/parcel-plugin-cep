@@ -1,83 +1,51 @@
 const path = require('path')
 const fs = require('fs-extra')
-const { defaultsDeep } = require('lodash')
-const { execSync } = require('child_process')
+const chokidar = require('chokidar');
 
 const {
   parseHosts,
   writeExtensionTemplates,
   enablePlayerDebugMode,
   symlinkExtension,
+  copyDependencies,
+  copyIcons,
+  getConfig,
+  objectToProcessEnv,
 } = require('./utils')
 
-const { createManifest } = require('./manifest')
-
 module.exports = async bundler => {
-  bundler.on('bundled', async bundle => {
-    await createManifest({ bundle })
-
-    if (bundle.entryAsset.type == 'html') {
-      const env = process.env.NODE_ENV
-      const port =
-        env != 'production' && bundler.server
-          ? bundler.server.address().port
-          : 1234
-
-      const out = path.dirname(bundle.name)
-      const htmlFilename = path.basename(bundle.entryAsset.parentBundle.name)
-
-      const root = process.cwd()
-      const package = await bundle.entryAsset.getPackage()
-
-      const config = defaultsDeep(
-        {
-          bundleName: process.env.NAME,
-          bundleId: process.env.ID,
-          bundleVersion: process.env.VERSION,
-          hosts: process.env.HOSTS,
-          iconNormal: process.env.ICON_NORMAL,
-          iconRollover: process.env.ICON_ROLLOVER,
-          iconDarkNormal: process.env.ICON_DARK_NORMAL,
-          iconDarkRollover: process.env.ICON_DARK_ROLLOVER,
-          panelWidth: process.env.PANEL_WIDTH,
-          panelHeight: process.env.PANEL_HEIGHT,
-        },
-        {
-          bundleName: package.cep && package.cep.name,
-          bundleId: package.cep && package.cep.id,
-          bundleVersion: package.cep && package.cep.version,
-          hosts: package.cep && package.cep.hosts,
-          iconNormal: package.cep.iconNormal,
-          iconRollover: package.cep.iconRollover,
-          iconDarkNormal: package.cep.iconDarkNormal,
-          iconDarkRollover: package.cep.iconDarkRollover,
-          panelWidth: package.cep.panelWidth,
-          panelHeight: package.cep.panelHeight,
-        },
-        {
-          bundleVersion: package.version,
-        },
-        {
-          bundleName: 'My Extension',
-          bundleId: 'com.mycompany.myextension',
-          bundleVersion: '0.0.1',
-          hosts: '*',
-          panelWidth: 500,
-          panelHeight: 500,
-        }
-      )
-
+  const root = process.cwd()
+  // load package.json
+  const package = fs.readJsonSync(path.join(root, 'package.json'))
+  // load config
+  const config = getConfig(package)
+  // assign config values to process.env
+  objectToProcessEnv(config)
+  // only run when the process is the one bundling the .html file
+  if (bundler.entryFiles.length === 1 && path.extname(bundler.entryFiles[0]) === '.html') {
+    const htmlFilename = path.basename(bundler.entryFiles[0])
+    const env = process.env.NODE_ENV
+    const port =
+      env != 'production' && bundler.server
+        ? bundler.server.address().port
+        : 1234
+    const out = bundler.options.outDir
+    // listen for changes to the package.json (that might have gotten changes to cep config values) and re-bundle
+    const watch = chokidar.watch(path.join(root, 'package.json'), {
+      ignored: /(^|[\/\\])\../,
+      persistent: true
+    });
+    watch.on('change', (path) => {
+      bundle()
+    })
+    bundler.on('buildEnd', () => {
+      watch.close()
+    })
+    bundle()
+    async function bundle() {
       enablePlayerDebugMode()
-
       const hosts = parseHosts(config.hosts)
-
-      await copyDependencies({
-        env,
-        out,
-        root,
-        package,
-      })
-
+      await copyDependencies({ root, out, package })
       await writeExtensionTemplates({
         env,
         hosts,
@@ -92,66 +60,12 @@ module.exports = async bundler => {
         iconDarkRollover: config.iconDarkRollover,
         panelWidth: config.panelWidth,
         panelHeight: config.panelHeight,
+        debugInProduction: config.debugInProduction,
         out,
       })
-
       await symlinkExtension({ bundleId: config.bundleId, out })
-      await copyIcons({ bundle, config })
+      await copyIcons({ bundler, config })
     }
-  })
+  }
 }
 
-async function copyDependencies({ env, out, root, package }) {
-  const nodeModulesName = 'node_modules'
-  const nodeModulesTempName = `${nodeModulesName}_temp`
-
-  // rename root node_modules so yarn install --production doesnt corrupt it
-  await fs.rename(
-    path.join(root, nodeModulesName),
-    path.join(root, nodeModulesTempName)
-  )
-
-  // install production dependences to out node_modules
-  execSync(
-    `yarn install --production --modules-folder ${path.join(
-      out,
-      nodeModulesName
-    )}`
-  )
-
-  // clean up after yarn
-  await fs.remove(path.join(root, nodeModulesName))
-
-  // restore root node_modules
-  await fs.rename(
-    path.join(root, nodeModulesTempName),
-    path.join(root, nodeModulesName)
-  )
-}
-
-async function copyIcons({ bundle, config }) {
-  const outDir = bundle.entryAsset.options.outDir
-  const iconPaths = [
-    config.iconNormal,
-    config.iconRollover,
-    config.iconDarkNormal,
-    config.iconDarkRollover,
-  ]
-    .filter(icon => !!icon)
-    .map(icon => ({
-      source: path.resolve(process.cwd(), icon),
-      output: path.join(outDir, path.relative(process.cwd(), icon)),
-    }))
-
-  await Promise.all(
-    iconPaths.map(async icon => {
-      try {
-        await fs.copy(icon.source, icon.output)
-      } catch (e) {
-        console.error(
-          `Could not copy ${icon.source}. Ensure the path is correct.`
-        )
-      }
-    })
-  )
-}
