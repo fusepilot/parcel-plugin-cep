@@ -117,6 +117,15 @@ PANEL_WIDTH=500
 PANEL_HEIGHT=500
 ```
 
+If you want to build [a resizable extension](https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_8.x/Documentation/CEP%208.0%20HTML%20Extension%20Cookbook.md#extension-size), you can use `PANEL_MIN_*` or `PANEL_MAX_*` like this.
+
+```bash
+PANEL_MIN_WIDTH=300
+PANEL_MIN_HEIGHT=300
+PANEL_MAX_WIDTH=800
+PANEL_MAX_HEIGHT=800
+```
+
 ## Communicating with Extendscript
 
 There are few functions that you can import from the `cep-interface` package to ease Extendscript communication from CEP.
