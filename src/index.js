@@ -60,6 +60,10 @@ module.exports = async bundler => {
         iconDarkRollover: config.iconDarkRollover,
         panelWidth: config.panelWidth,
         panelHeight: config.panelHeight,
+        panelMinWidth: config.panelMinWidth,
+        panelMinHeight: config.panelMinHeight,
+        panelMaxWidth: config.panelMaxWidth,
+        panelMaxHeight: config.panelMaxHeight,
         debugInProduction: config.debugInProduction,
         out,
       })

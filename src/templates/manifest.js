@@ -7,6 +7,10 @@ module.exports = function({
   cepVersion = '6.0',
   panelWidth = '500',
   panelHeight = '500',
+  panelMinWidth = undefined,
+  panelMinHeight = undefined,
+  panelMaxWidth = undefined,
+  panelMaxHeight = undefined,
   cefParams = [
     '--allow-file-access-from-files',
     '--allow-file-access',
@@ -30,6 +34,16 @@ module.exports = function({
     .filter(({ icon }) => !!icon)
     .map(({ icon, type }) => `<Icon Type="${type}">${icon}</Icon>`)
     .join('\n            ')
+
+  var sizeTemplate = (name, width, height) =>
+    width !== undefined && height !== undefined ? `
+            <${name}>
+              <Width>${width}</Width>
+              <Height>${height}</Height>
+            </${name}>` : '';
+  var size = sizeTemplate('Size', panelWidth, panelHeight);
+  var minSize = sizeTemplate('MinSize', panelMinWidth, panelMinHeight);
+  var maxSize = sizeTemplate('MaxSize', panelMaxWidth, panelMaxHeight);
 
   return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ExtensionBundleId="${bundleId}" ExtensionBundleName="${bundleName}" ExtensionBundleVersion="${bundleVersion}" Version="${cepVersion}">
@@ -64,11 +78,7 @@ module.exports = function({
         <UI>
           <Type>Panel</Type>
           <Menu>${bundleName}</Menu>
-          <Geometry>
-            <Size>
-              <Width>${panelWidth}</Width>
-              <Height>${panelHeight}</Height>
-            </Size>
+          <Geometry>${size}${minSize}${maxSize}
           </Geometry>
           <Icons>
             ${icons}
