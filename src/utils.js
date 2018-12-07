@@ -69,6 +69,10 @@ function getConfig(package) {
       iconDarkRollover: process.env.ICON_DARK_ROLLOVER,
       panelWidth: process.env.PANEL_WIDTH,
       panelHeight: process.env.PANEL_HEIGHT,
+      panelMinWidth: process.env.PANEL_MIN_WIDTH,
+      panelMinHeight: process.env.PANEL_MIN_HEIGHT,
+      panelMaxWidth: process.env.PANEL_MAX_WIDTH,
+      panelMaxHeight: process.env.PANEL_MAX_HEIGHT,
       debugPorts: debugPortEnvs.length > 0
         ? debugPortEnvs.reduce((obj, key) => {
           obj[key] = parseInt(process.env[key], 10)
@@ -88,6 +92,10 @@ function getConfig(package) {
       iconDarkRollover: package.cep.iconDarkRollover,
       panelWidth: package.cep.panelWidth,
       panelHeight: package.cep.panelHeight,
+      panelMinWidth: package.cep.panelMinWidth,
+      panelMinHeight: package.cep.panelMinHeight,
+      panelMaxWidth: package.cep.panelMaxWidth,
+      panelMaxHeight: package.cep.panelMaxHeight,
       debugPorts: package.cep.debugPorts,
       debugInProduction: package.cep.debugInProduction,
     },
@@ -101,6 +109,10 @@ function getConfig(package) {
       hosts: '*',
       panelWidth: 500,
       panelHeight: 500,
+      panelMinWidth: undefined,
+      panelMinHeight: undefined,
+      panelMaxWidth: undefined,
+      panelMaxHeight: undefined,
       debugInProduction: false,
       debugPorts: {
         PHXS: 3001,
@@ -147,6 +159,10 @@ async function writeExtensionTemplates({
   iconDarkRollover,
   panelWidth,
   panelHeight,
+  panelMinWidth,
+  panelMinHeight,
+  panelMaxWidth,
+  panelMaxHeight,
   debugInProduction,
 }) {
   const manifestContents = manifestTemplate({
@@ -161,6 +177,10 @@ async function writeExtensionTemplates({
     iconDarkRollover,
     panelWidth,
     panelHeight,
+    panelMinWidth,
+    panelMinHeight,
+    panelMaxWidth,
+    panelMaxHeight,
   })
 
   await fs.ensureDir(path.join(out, 'CSXS'))
