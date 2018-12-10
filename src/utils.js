@@ -235,7 +235,9 @@ async function copyDependencies({ root, out, package }) {
     try {
       const src = path.join(root, 'node_modules', dep)
       const dest = path.join(out, 'node_modules', dep)
-      await fs.copy(src, dest)
+      if (!fs.existsSync(dest)) {
+        await fs.copy(src, dest)
+      }
     } catch (err) {
       console.error('Error while copying', err)
     }
