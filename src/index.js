@@ -43,7 +43,6 @@ module.exports = async bundler => {
     })
     bundle()
     async function bundle() {
-      enablePlayerDebugMode()
       const hosts = parseHosts(config.hosts)
       await copyDependencies({ root, out, package })
       await writeExtensionTemplates({
@@ -63,8 +62,12 @@ module.exports = async bundler => {
         debugInProduction: config.debugInProduction,
         out,
       })
-      await symlinkExtension({ bundleId: config.bundleId, out })
       await copyIcons({ bundler, config })
+
+      if (env !== 'production') {
+        enablePlayerDebugMode()
+        await symlinkExtension({ bundleId: config.bundleId, out })
+      }
     }
   }
 }
