@@ -16,6 +16,7 @@ module.exports = function({
   iconRollover,
   iconDarkNormal,
   iconDarkRollover,
+  lifecycle,
 }) {
   var commandLineParams = cefParams.map(
     cefParam => `<Parameter>${cefParam}</Parameter>`
@@ -30,6 +31,11 @@ module.exports = function({
     .filter(({ icon }) => !!icon)
     .map(({ icon, type }) => `<Icon Type="${type}">${icon}</Icon>`)
     .join('\n            ')
+
+  var startOn = (!lifecycle.startOnEvents || lifecycle.startOnEvents.length === 0) ? '' : `
+          <StartOn>
+            ${lifecycle.startOnEvents.map(e => `<Event>${e}</Event>`).join('\n            ')}
+          </StartOn>`;
 
   return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <ExtensionManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ExtensionBundleId="${bundleId}" ExtensionBundleName="${bundleName}" ExtensionBundleVersion="${bundleVersion}" Version="${cepVersion}">
@@ -59,7 +65,7 @@ module.exports = function({
           </CEFCommandLine>
         </Resources>
         <Lifecycle>
-          <AutoVisible>true</AutoVisible>
+          <AutoVisible>${lifecycle.autoVisible}</AutoVisible>${startOn}
         </Lifecycle>
         <UI>
           <Type>Panel</Type>
