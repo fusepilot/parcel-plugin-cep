@@ -90,6 +90,7 @@ function getConfig(package) {
       panelHeight: package.cep.panelHeight,
       debugPorts: package.cep.debugPorts,
       debugInProduction: package.cep.debugInProduction,
+      lifecycle: package.cep.lifecycle,
     },
     {
       bundleVersion: package.version,
@@ -115,7 +116,8 @@ function getConfig(package) {
         DRWV: 3010,
         MUST: 3011,
         KBRG: 3012,
-      }
+      },
+      lifecycle: {autoVisible: true, startOnEvents: []},
     }
   )
   return config
@@ -148,6 +150,7 @@ async function writeExtensionTemplates({
   panelWidth,
   panelHeight,
   debugInProduction,
+  lifecycle,
 }) {
   const manifestContents = manifestTemplate({
     bundleName,
@@ -161,6 +164,7 @@ async function writeExtensionTemplates({
     iconDarkRollover,
     panelWidth,
     panelHeight,
+    lifecycle,
   })
 
   await fs.ensureDir(path.join(out, 'CSXS'))
