@@ -36,7 +36,8 @@ module.exports = async bundler => {
         env: env,
         root: root,
         htmlFilename: htmlFilename,
-        pkg: pkg
+        pkg: pkg,
+        isDev: env !== 'production'
       })
     }
   }
