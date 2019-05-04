@@ -7,8 +7,8 @@ Zero configuration CEP extension builder for [Parcel](https://github.com/parcel-
 ```sh
 git clone https://github.com/fusepilot/parcel-plugin-cep-starter.git
 cd parcel-plugin-cep-starter
-npm
-npm run start
+npm install
+npm start
 ```
 
 Open your CC app of choice, find your extension under `Window` > `Extensions`, and start developing.
@@ -50,72 +50,12 @@ You can configure CEP a either through environment variables or the `package.jso
 Either `set` thorugh your terminal or add to the `.env` file.
 
 ```bash
-NAME="My Extension"
-BUNDLE_ID="com.mycompany.myextension"
-HOSTS="*"
+CEP_NAME="My Extension"
+CEP_ID="com.mycompany.myextension"
+CEP_HOSTS="*"
 ```
 
-### Options
-
-#### Id
-
-This is the unique id of the extension.
-
-#### Version
-
-This sets the version of the bundle.
-
-#### Name
-
-This sets the name of extension as it will show in the application.
-
-#### Hosts
-
-By default, the extension will target all known Adobe hosts. To target specific hosts, uncomment the `HOSTS` variable to `.env` and modify the list of the hosts you want to target.
-
-For example, to target just Illustrator and After Effects, you would add this to your `.env` file:
-
-```bash
-HOSTS="ILST, AEFT"
-```
-
-And to target specific versions:
-
-```bash
-HOSTS="ILST, IDSN@*, PHXS@6.0, AEFT@[5.0,10.0]"
-```
-
-This will target all versions of Illustrator and In Design, Photoshop 6.0, and After Effects 5.0 - 10.0.
-
-#### Icon
-
-To add a custom panel icon, add all [icon files](https://github.com/Adobe-CEP/CEP-Resources/blob/master/CEP_8.x/Documentation/CEP%208.0%20HTML%20Extension%20Cookbook.md#high-dpi-panel-icons) inside the `public` folder and set their paths inside your `.env` file:
-
-```bash
-ICON_NORMAL="./assets/icon-normal.png"
-ICON_ROLLOVER="./assets/icon-rollover.png"
-ICON_DARK_NORMAL="./assets/icon-dark.png"
-ICON_DARK_ROLLOVER="./assets/icon-dark-rollover.png"
-```
-
-#### Cerificate Signing
-
-In order to create a valid ZXP, you will need to provide the following variables replaced with the correct information inside your `.env`.
-
-```bash
-CERTIFICATE_COUNTRY="US"
-CERTIFICATE_PROVINCE="CA"
-CERTIFICATE_ORG="MyCompany"
-CERTIFICATE_NAME="com.mycompany"
-CERTIFICATE_PASSWORD="mypassword"
-```
-
-#### Panel Size
-
-```bash
-PANEL_WIDTH=500
-PANEL_HEIGHT=500
-```
+You can find all the available options on the [cep-bundler-core](https://github.com/adobe-extension-tools/cep-bundler-core) readme.
 
 ## Communicating with Extendscript
 
