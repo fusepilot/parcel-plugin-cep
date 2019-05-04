@@ -1,26 +1,12 @@
 const path = require('path')
-const fs = require('fs-extra')
+const fs = require('fs')
 const chokidar = require('chokidar');
-
-const {
-  parseHosts,
-  writeExtensionTemplates,
-  enablePlayerDebugMode,
-  symlinkExtension,
-  copyDependencies,
-  copyIcons,
-  getConfig,
-  objectToProcessEnv,
-} = require('./utils')
+const { compile } = require('cep-bundler-core')
 
 module.exports = async bundler => {
   const root = process.cwd()
   // load package.json
-  const package = fs.readJsonSync(path.join(root, 'package.json'))
-  // load config
-  const config = getConfig(package)
-  // assign config values to process.env
-  objectToProcessEnv(config)
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
   // only run when the process is the one bundling the .html file
   if (bundler.entryFiles.length === 1 && path.extname(bundler.entryFiles[0]) === '.html') {
     const htmlFilename = path.basename(bundler.entryFiles[0])
@@ -42,33 +28,17 @@ module.exports = async bundler => {
       watch.close()
     })
     bundle()
-    async function bundle() {
-      const hosts = parseHosts(config.hosts)
-      await copyDependencies({ root, out, package })
-      await writeExtensionTemplates({
-        env,
-        hosts,
-        port,
-        htmlFilename,
-        bundleName: config.bundleName,
-        bundleId: config.bundleId,
-        bundleVersion: config.bundleVersion,
-        iconNormal: config.iconNormal,
-        iconRollover: config.iconRollover,
-        iconDarkNormal: config.iconDarkNormal,
-        iconDarkRollover: config.iconDarkRollover,
-        panelWidth: config.panelWidth,
-        panelHeight: config.panelHeight,
-        debugInProduction: config.debugInProduction,
-        lifecycle: config.lifecycle,
-        out,
+    function bundle() {
+      compile({
+        out: out,
+        devPort: port,
+        devHost: 'localhost',
+        env: env,
+        root: root,
+        htmlFilename: htmlFilename,
+        pkg: pkg,
+        isDev: env !== 'production'
       })
-      await copyIcons({ bundler, config })
-
-      if (env !== 'production') {
-        enablePlayerDebugMode()
-        await symlinkExtension({ bundleId: config.bundleId, out })
-      }
     }
   }
 }
