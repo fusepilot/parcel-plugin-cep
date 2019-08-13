@@ -12,7 +12,7 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         version: '10.x'
-    - run: npm run install
+    - run: npm install
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     - run: npm publish
