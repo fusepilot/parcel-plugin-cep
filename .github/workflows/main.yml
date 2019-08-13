@@ -13,6 +13,8 @@ jobs:
       with:
         version: '10.x'
     - run: npm run install
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     - run: npm publish
       env:
         NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
