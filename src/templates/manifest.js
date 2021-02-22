@@ -11,6 +11,7 @@ module.exports = function({
     '--allow-file-access-from-files',
     '--allow-file-access',
     '--enable-nodejs',
+    '--mixed-context',
   ],
   iconNormal,
   iconRollover,
