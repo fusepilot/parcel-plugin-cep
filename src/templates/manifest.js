@@ -11,7 +11,6 @@ module.exports = function({
     '--allow-file-access-from-files',
     '--allow-file-access',
     '--enable-nodejs',
-    '--mixed-context',
   ],
   iconNormal,
   iconRollover,
@@ -19,6 +18,10 @@ module.exports = function({
   iconDarkRollover,
   lifecycle,
 }) {
+  if (process.env.NODE_ENV === 'development' && cefParams.indexOf('--mixed-context') === -1) {
+    cefParams.push('--mixed-context')
+  }
+
   var commandLineParams = cefParams.map(
     cefParam => `<Parameter>${cefParam}</Parameter>`
   )
