@@ -18,6 +18,10 @@ module.exports = function({
   iconDarkRollover,
   lifecycle,
 }) {
+  if (process.env.NODE_ENV === 'development' && cefParams.indexOf('--mixed-context') === -1) {
+    cefParams.push('--mixed-context')
+  }
+
   var commandLineParams = cefParams.map(
     cefParam => `<Parameter>${cefParam}</Parameter>`
   )

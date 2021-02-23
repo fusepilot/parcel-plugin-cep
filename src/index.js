@@ -53,6 +53,7 @@ module.exports = async bundler => {
         bundleName: config.bundleName,
         bundleId: config.bundleId,
         bundleVersion: config.bundleVersion,
+        cefParams: config.cefParams,
         iconNormal: config.iconNormal,
         iconRollover: config.iconRollover,
         iconDarkNormal: config.iconDarkNormal,
