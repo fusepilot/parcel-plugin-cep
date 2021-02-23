@@ -15,9 +15,9 @@
   },
   "license": "MIT",
   "dependencies": {
-    "chokidar": "^2.0.4",
-    "fs-extra": "^5.0.0",
-    "lodash": "^4.17.5"
+    "chokidar": "^3.0.0",
+    "fs-extra": "^9.0.0",
+    "lodash": "^4.17.21"
   },
   "prettier": {
     "trailingComma": "es5",
